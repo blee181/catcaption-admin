@@ -1,0 +1,370 @@
+:root {
+  --bg: #f5f4ef;
+  --panel: #ffffff;
+  --ink: #242321;
+  --muted: #8b8881;
+  --line: #e3e0d8;
+  --accent: #ff7a45;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.adminFrame {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+}
+
+.adminSidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: #fbfaf7;
+  border-right: 1px solid var(--line);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.adminBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.brandMark {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+}
+
+.adminBrand strong {
+  display: block;
+  font-size: 0.92rem;
+}
+
+.adminBrand span {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.navGroup {
+  margin-bottom: 22px;
+}
+
+.navSection {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: #aaa69f;
+  font-weight: 800;
+  margin: 0 10px 8px;
+}
+
+.navLink {
+  display: block;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  margin: 2px 0;
+}
+
+.navLink:hover {
+  background: #efede7;
+}
+
+.adminAccount {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.adminAccount span {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.adminAccount strong {
+  display: block;
+  font-size: 0.72rem;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.adminMain {
+  min-width: 0;
+}
+
+.pageWrap {
+  padding: 36px 34px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  margin-bottom: 22px;
+}
+
+.pageHeader h1 {
+  font-size: 2rem;
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.pageHeader p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.metricCard {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 104px;
+}
+
+.metricCard > span {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.metricCard > strong {
+  display: block;
+  font-size: 2rem;
+  margin-top: 8px;
+  letter-spacing: -0.05em;
+}
+
+.metricCard > small {
+  display: block;
+  color: #aaa69f;
+  margin-top: 3px;
+  font-size: 0.68rem;
+}
+
+.gaugeCard {
+  display: grid;
+  place-items: center;
+  padding: 10px;
+}
+
+.gaugeRing {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      var(--accent) var(--pct),
+      #ece8df 0
+    );
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.gaugeRing::after {
+  content: "";
+  position: absolute;
+  width: 62px;
+  height: 62px;
+  background: white;
+  border-radius: 50%;
+}
+
+.gaugeCenter {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.gaugeCenter strong {
+  display: block;
+  font-size: 1.2rem;
+}
+
+.gaugeCenter span {
+  font-size: 0.58rem;
+  color: var(--muted);
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 14px;
+}
+
+.dashCard {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.dashCard.large {
+  min-height: 300px;
+}
+
+.dashCard.full {
+  grid-column: 1 / -1;
+}
+
+.dashCardHeader h2 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.dashCardHeader p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.barList {
+  display: grid;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 90px 1fr 40px;
+  gap: 12px;
+  align-items: center;
+  font-size: 0.78rem;
+}
+
+.barTrack {
+  height: 11px;
+  background: #f0ede7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+}
+
+.barRow strong {
+  text-align: right;
+}
+
+.factList {
+  margin: 22px 0 0;
+  padding-left: 18px;
+}
+
+.factList li {
+  margin: 13px 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #55514b;
+}
+
+.ranking {
+  margin-top: 12px;
+}
+
+.rankRow {
+  display: grid;
+  grid-template-columns: 50px 1fr 60px;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+}
+
+.rankNo {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.rankText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rankRow strong {
+  text-align: right;
+}
+
+@media (max-width: 1100px) {
+  .metricGrid {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashCard.full {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .adminFrame {
+    grid-template-columns: 1fr;
+  }
+
+  .adminSidebar {
+    position: relative;
+    height: auto;
+  }
+
+  .metricGrid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .pageWrap {
+    padding: 24px 16px 40px;
+  }
+}
