@@ -6,7 +6,7 @@ type Config = {
   title: string;
   subtitle: string;
   table: string;
-  mode: "read" | "crud" | "mix" | "media" | "votes";
+  mode: "read" | "crud" | "mix" | "media" | "votes" | "images";
   fields?: { key: string; label: string; type?: "text" | "number" | "boolean" }[];
   select?: string;
 };
@@ -26,6 +26,7 @@ const configs: Record<string, Config> = {
       { key: "created_at", label: "Joined" },
     ],
   },
+  images: { title: "Images", subtitle: "Upload and manage meme images used by the caption app.", table: "meme_images", mode: "images" },
   media: {
     title: "AI Media",
     subtitle: "View generated captions and their meme templates.",
@@ -187,6 +188,63 @@ export default async function SectionPage({ params }: { params: Promise<{ sectio
   const config = configs[section];
   if (!config) notFound();
   const supabase = await assertAdmin();
+
+
+  if (config.mode === "images") {
+    const { data: images, error: imageError } = await supabase.from("meme_images").select("id,title,description,image_url,created_at").order("created_at", {ascending:false});
+    async function createImage(fd: FormData) {
+      "use server";
+      const db=await assertAdmin();
+      const file=fd.get("file");
+      let imageUrl=String(fd.get("image_url")||"").trim();
+      if (file instanceof File && file.size>0) {
+        if (!file.type.startsWith("image/") || file.size>5*1024*1024) throw new Error("Please upload an image under 5 MB.");
+        const name=crypto.randomUUID()+"-"+file.name.replace(/[^a-zA-Z0-9.\-_]/g,"_");
+        const uploaded=await db.storage.from("admin-meme-images").upload(name,await file.arrayBuffer(),{contentType:file.type,upsert:false});
+        if (uploaded.error) throw new Error(uploaded.error.message);
+        imageUrl=db.storage.from("admin-meme-images").getPublicUrl(name).data.publicUrl;
+      }
+      if (!imageUrl || !/^https?:\/\//i.test(imageUrl)) throw new Error("Upload an image or provide a valid image URL.");
+      const {error}=await db.from("meme_images").insert({title:String(fd.get("title")||"").trim(),description:String(fd.get("description")||"").trim(),image_url:imageUrl});
+      if(error) throw new Error(error.message);
+      revalidatePath("/admin/images");
+    }
+    async function updateImage(fd: FormData) {
+      "use server";
+      const db=await assertAdmin();
+      const id=String(fd.get("id"));
+      const {error}=await db.from("meme_images").update({title:String(fd.get("title")||"").trim(),description:String(fd.get("description")||"").trim()}).eq("id",id);
+      if(error) throw new Error(error.message);
+      revalidatePath("/admin/images");
+    }
+    async function deleteImage(fd: FormData) {
+      "use server";
+      const db=await assertAdmin();
+      const id=String(fd.get("id"));
+      const {error}=await db.from("meme_images").delete().eq("id",id);
+      if(error) throw new Error(error.message);
+      revalidatePath("/admin/images");
+    }
+    return <PageShell title="Images" subtitle="Upload, edit, and delete meme templates used in CATCAPTION.">
+      <section className="createBox"><span className="eyebrow">ADD IMAGE</span><h2>New meme template</h2>
+      <form action={createImage} className="createGrid">
+        <input name="title" placeholder="Image title" required />
+        <input name="description" placeholder="Description" />
+        <input name="image_url" type="url" placeholder="Image URL (or upload a file)" />
+        <input name="file" type="file" accept="image/*" />
+        <button className="orangeButton">Upload / Create</button>
+      </form></section>
+      {imageError && <div className="createBox">Error loading images: {imageError.message}</div>}
+      <div className="mediaCards">{(images??[]).map(row=><article className="mediaAdminCard" key={row.id}>
+        <img src={row.image_url} alt={row.title} />
+        <div className="mediaAdminBody"><form action={updateImage} className="rowForm">
+          <input type="hidden" name="id" value={row.id}/><input name="title" defaultValue={row.title} required/><input name="description" defaultValue={row.description||""}/>
+          <button className="softButton">Save changes</button>
+        </form><p className="mono">{row.id}</p><form action={deleteImage}><input type="hidden" name="id" value={row.id}/><button className="deleteButton">Delete image</button></form></div>
+      </article>)}</div>
+      {!images?.length && <div className="emptyState">No images found.</div>}
+    </PageShell>;
+  }
 
   if (config.mode === "media") {
     const { data } = await supabase
