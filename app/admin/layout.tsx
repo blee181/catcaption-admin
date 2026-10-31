@@ -10,6 +10,7 @@ const groups = [
     [
       ["/admin/users", "Users"],
       ["/admin/media", "AI Media"],
+      ["/admin/images", "Images"],
       ["/admin/votes", "Votes"],
     ],
   ],
