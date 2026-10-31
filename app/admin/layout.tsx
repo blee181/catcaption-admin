@@ -71,7 +71,7 @@ export default async function AdminLayout({
   const { data: ownerAccess } = await supabase.rpc("is_project_owner");
 
   if (!profile?.is_superadmin && !ownerAccess) {
-    redirect("/");
+    redirect("/unauthorized");
   }
 
   return (
