@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function Unauthorized() { return <main style={{maxWidth:650,margin:"100px auto",fontFamily:"Arial,sans-serif",padding:24}}><h1>Admin access required</h1><p>You have signed in, but this account does not currently have admin access. Ask the project owner to enable the is_superadmin role for your user in Supabase.</p><Link href="/login">Sign in with another account</Link></main>; }
