@@ -190,6 +190,48 @@ export default async function SectionPage({ params }: { params: Promise<{ sectio
   const supabase = await assertAdmin();
 
 
+  if (section === "users") {
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    const { data: users, error } = await supabase.from("profiles")
+      .select("id,first_name,last_name,created_at,is_superadmin")
+      .order("created_at", { ascending: false });
+
+    async function setRole(fd: FormData) {
+      "use server";
+      const db = await assertAdmin();
+      const userId = String(fd.get("user_id") || "");
+      const grantAdmin = fd.get("grant_admin") === "true";
+      const { error: roleError } = await db.rpc("set_admin_role", {
+        target_user_id: userId,
+        grant_admin: grantAdmin,
+      });
+      if (roleError) throw new Error(roleError.message);
+      revalidatePath("/admin/users");
+    }
+
+    return <PageShell title="Users & admin access" subtitle="Manage who can access the independent CATCAPTION admin dashboard. Only existing admins can change roles.">
+      {error && <div className="createBox">Error loading users: {error.message}</div>}
+      <div className="dataCard">
+        <table className="adminTable">
+          <thead><tr><th>User</th><th>User ID</th><th>Joined</th><th>Access</th><th>Manage role</th></tr></thead>
+          <tbody>{(users ?? []).map((u) => <tr key={u.id}>
+            <td>{[u.first_name,u.last_name].filter(Boolean).join(" ") || "Unnamed user"}</td>
+            <td className="mono">{u.id}</td>
+            <td>{u.created_at ? new Date(u.created_at).toLocaleString() : "—"}</td>
+            <td><span className="scorePill">{u.is_superadmin ? "Admin" : "User"}</span></td>
+            <td><form action={setRole} className="rowForm">
+              <input type="hidden" name="user_id" value={u.id} />
+              <input type="hidden" name="grant_admin" value={u.is_superadmin ? "false" : "true"} />
+              <button className={u.is_superadmin ? "softButton" : "orangeButton"} disabled={u.id === currentUser?.id && u.is_superadmin}>
+                {u.is_superadmin ? (u.id === currentUser?.id ? "Your account" : "Remove admin") : "Make admin"}
+              </button>
+            </form></td>
+          </tr>)}</tbody>
+        </table>
+      </div>
+    </PageShell>;
+  }
+
   if (config.mode === "images") {
     const { data: images, error: imageError } = await supabase.from("meme_images").select("id,title,description,image_url,created_at").order("created_at", {ascending:false});
     async function createImage(fd: FormData) {
