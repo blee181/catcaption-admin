@@ -9,7 +9,7 @@ export default async function AdminOverview() {
 
   const [profilesR,captionsR,votesR,memesR,chainsR,requestsR,responsesR] = await Promise.all([
     supabase.from("profiles").select("id,is_superadmin,created_at"),
-    supabase.from("captions").select("id,caption_text,created_at,meme_image_id,votes(vote),meme_images(title,image_url)"),
+    supabase.from("captions").select("id,user_id,caption_text,created_at,meme_image_id,votes(vote),meme_images(title,image_url)"),
     supabase.from("votes").select("id,vote,created_at,user_id,caption_id"),
     supabase.from("meme_images").select("id,title,image_url"),
     supabase.from("prompt_chains").select("id"),
